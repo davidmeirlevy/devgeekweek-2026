@@ -5,12 +5,19 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  getTasksByPriority,
 } from "./store";
 
 const router = Router();
 
+const VALID_PRIORITIES = ["low", "medium", "high"];
+
 router.get("/tasks", (_req: Request, res: Response) => {
   res.json(getAllTasks());
+});
+
+router.get("/tasks/by-priority", (_req: Request, res: Response) => {
+  res.json(getTasksByPriority());
 });
 
 router.get("/tasks/:id", (req: Request, res: Response) => {
@@ -23,24 +30,33 @@ router.get("/tasks/:id", (req: Request, res: Response) => {
 });
 
 router.post("/tasks", (req: Request, res: Response) => {
-  const { title, description } = req.body;
+  const { title, description, priority } = req.body;
   if (!title || typeof title !== "string") {
     res.status(400).json({ error: "title is required" });
     return;
   }
-  const task = createTask({ title, description });
+  if (priority && !VALID_PRIORITIES.includes(priority)) {
+    res.status(400).json({ error: "Invalid priority" });
+    return;
+  }
+  const task = createTask({ title, description, priority });
   res.status(201).json(task);
 });
 
 router.patch("/tasks/:id", (req: Request, res: Response) => {
-  const { title, description, status } = req.body;
+  const { title, description, status, priority } = req.body;
 
   if (status && !["todo", "in-progress", "done"].includes(status)) {
     res.status(400).json({ error: "Invalid status" });
     return;
   }
 
-  const task = updateTask(req.params.id, { title, description, status });
+  if (priority && !VALID_PRIORITIES.includes(priority)) {
+    res.status(400).json({ error: "Invalid priority" });
+    return;
+  }
+
+  const task = updateTask(req.params.id, { title, description, status, priority });
   if (!task) {
     res.status(404).json({ error: "Task not found" });
     return;
