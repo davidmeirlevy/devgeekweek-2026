@@ -1,0 +1,19 @@
+---
+description: "Route and controller conventions"
+globs: ["src/routes/**/*.ts", "src/controllers/**/*.ts"]
+alwaysApply: false
+---
+
+# Route & Controller Rules
+
+## Routes
+- One route file per resource (e.g. `task.routes.ts`).
+- Routes only map paths to controller functions — no logic.
+- Specific routes (e.g. `/tasks/by-priority`) before parameterized routes (`/tasks/:id`).
+
+## Controllers
+- Validation at the top using guard clauses.
+- Error responses use `{ error: "message" }` format.
+- Use 201 for creation, 204 for deletion.
+- Always return early after sending a response.
+- Controllers call services, never models directly.
