@@ -1,0 +1,39 @@
+---
+description: "Project-wide conventions for the Task API"
+alwaysApply: true
+---
+
+# Task API — Project Rules
+
+## Tech stack
+- Runtime: Node.js with tsx (TypeScript execution)
+- Framework: Express 4
+- Testing: Vitest + Supertest
+- Language: TypeScript (strict mode)
+
+## Architecture
+- `src/models/` — data layer (in-memory store, CRUD operations)
+- `src/services/` — business logic (calls models, orchestrates)
+- `src/controllers/` — HTTP layer (request/response, validation)
+- `src/routes/` — route definitions (maps paths to controllers)
+- `src/types.ts` — shared type definitions
+
+## Code conventions
+- Named exports for models, services, controllers.
+- Default export for routers and the Express app.
+- Controllers handle validation; services handle logic; models handle data.
+- `const` by default; `let` only when mutation is needed.
+
+## Testing
+- `tests/unit/` — unit tests for services (no HTTP)
+- `tests/integration/` — API tests via supertest (full stack)
+
+## When adding a new feature
+1. Types in `src/types.ts`
+2. Model functions in `src/models/`
+3. Service functions in `src/services/`
+4. Controller in `src/controllers/`
+5. Route in `src/routes/`
+6. Unit tests in `tests/unit/`
+7. Integration tests in `tests/integration/`
+8. Run `npm test` to verify
