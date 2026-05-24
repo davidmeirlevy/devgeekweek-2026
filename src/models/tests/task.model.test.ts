@@ -15,15 +15,17 @@ describe("task.model", () => {
       expect(task.description).toBe("");
       expect(task.status).toBe("todo");
       expect(task.priority).toBe("medium");
+      expect(task.tags).toEqual([]);
       expect(task.createdAt).toBeDefined();
       expect(task.updatedAt).toBeDefined();
     });
 
     it("inserts a task with explicit fields", () => {
-      const task = model.insert({ title: "Full", description: "desc", priority: "high" });
+      const task = model.insert({ title: "Full", description: "desc", priority: "high", tags: ["x"] });
 
       expect(task.description).toBe("desc");
       expect(task.priority).toBe("high");
+      expect(task.tags).toEqual(["x"]);
     });
   });
 
@@ -98,6 +100,42 @@ describe("task.model", () => {
 
     it("returns empty array when no tasks", () => {
       expect(model.findByPriority()).toEqual([]);
+    });
+  });
+
+  describe("filter", () => {
+    it("filters by status", () => {
+      model.insert({ title: "Todo" });
+      const done = model.insert({ title: "Done" });
+      model.update(done.id, { status: "done" });
+
+      const result = model.filter({ status: "done" });
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("Done");
+    });
+
+    it("filters by priority", () => {
+      model.insert({ title: "High", priority: "high" });
+      model.insert({ title: "Low", priority: "low" });
+
+      const result = model.filter({ priority: "high" });
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("High");
+    });
+
+    it("filters by tag", () => {
+      model.insert({ title: "FE", tags: ["frontend"] });
+      model.insert({ title: "BE", tags: ["backend"] });
+
+      const result = model.filter({ tag: "frontend" });
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("FE");
+    });
+
+    it("returns all tasks when no filters applied", () => {
+      model.insert({ title: "A" });
+      model.insert({ title: "B" });
+      expect(model.filter({})).toHaveLength(2);
     });
   });
 

@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { Task, CreateTaskInput, UpdateTaskInput, Priority } from "../types";
+import { Task, CreateTaskInput, UpdateTaskInput, Priority, TaskFilters } from "../types";
 
 const tasks: Map<string, Task> = new Map();
 
@@ -19,6 +19,7 @@ export function insert(input: CreateTaskInput): Task {
     description: input.description ?? "",
     status: "todo",
     priority: input.priority ?? "medium",
+    tags: input.tags ?? [],
     createdAt: now,
     updatedAt: now,
   };
@@ -48,6 +49,20 @@ export function findByPriority(): Task[] {
   return Array.from(tasks.values()).sort(
     (a, b) => order[a.priority] - order[b.priority]
   );
+}
+
+export function filter(filters: TaskFilters): Task[] {
+  let result = Array.from(tasks.values());
+  if (filters.status) {
+    result = result.filter((t) => t.status === filters.status);
+  }
+  if (filters.priority) {
+    result = result.filter((t) => t.priority === filters.priority);
+  }
+  if (filters.tag) {
+    result = result.filter((t) => t.tags.includes(filters.tag!));
+  }
+  return result;
 }
 
 export function clear(): void {

@@ -16,11 +16,13 @@ describe("taskService", () => {
       expect(task.description).toBe("");
       expect(task.status).toBe("todo");
       expect(task.priority).toBe("medium");
+      expect(task.tags).toEqual([]);
     });
 
-    it("creates a task with explicit priority", () => {
-      const task = taskService.createTask({ title: "Urgent", priority: "high" });
+    it("creates a task with explicit priority and tags", () => {
+      const task = taskService.createTask({ title: "Urgent", priority: "high", tags: ["backend"] });
       expect(task.priority).toBe("high");
+      expect(task.tags).toEqual(["backend"]);
     });
   });
 
@@ -73,6 +75,27 @@ describe("taskService", () => {
       expect(sorted[0].title).toBe("High");
       expect(sorted[1].title).toBe("Med");
       expect(sorted[2].title).toBe("Low");
+    });
+  });
+
+  describe("filterTasks", () => {
+    it("filters by status", () => {
+      taskService.createTask({ title: "Todo" });
+      const created = taskService.createTask({ title: "Done" });
+      taskService.updateTask(created.id, { status: "done" });
+
+      const result = taskService.filterTasks({ status: "done" });
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("Done");
+    });
+
+    it("filters by tag", () => {
+      taskService.createTask({ title: "FE", tags: ["frontend"] });
+      taskService.createTask({ title: "BE", tags: ["backend"] });
+
+      const result = taskService.filterTasks({ tag: "frontend" });
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("FE");
     });
   });
 });
