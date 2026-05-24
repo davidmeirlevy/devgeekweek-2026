@@ -1,4 +1,4 @@
-import { Task, CreateTaskInput, UpdateTaskInput } from "../types";
+import { Task, CreateTaskInput, UpdateTaskInput, TaskFilters } from "../types";
 import * as taskModel from "../models/task.model";
 
 export function getAllTasks(): Task[] {
@@ -23,4 +23,8 @@ export function deleteTask(id: string): boolean {
 
 export function getTasksByPriority(): Task[] {
   return taskModel.findByPriority();
+}
+
+export function filterTasks(filters: TaskFilters): Task[] {
+  return taskModel.filter(filters);
 }
