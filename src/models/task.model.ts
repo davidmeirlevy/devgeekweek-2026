@@ -31,9 +31,16 @@ export function update(id: string, input: UpdateTaskInput): Task | null {
   const existing = tasks.get(id);
   if (!existing) return null;
 
+  const changes: Partial<Task> = {};
+  if (input.title !== undefined) changes.title = input.title;
+  if (input.description !== undefined) changes.description = input.description;
+  if (input.status !== undefined) changes.status = input.status;
+  if (input.priority !== undefined) changes.priority = input.priority;
+  if (input.tags !== undefined) changes.tags = input.tags;
+
   const updated: Task = {
     ...existing,
-    ...input,
+    ...changes,
     updatedAt: new Date().toISOString(),
   };
   tasks.set(id, updated);
