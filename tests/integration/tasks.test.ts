@@ -65,6 +65,33 @@ describe("POST /api/tasks", () => {
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid priority");
   });
+
+  it("creates a task with tags", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Tagged", tags: ["frontend", "urgent"] });
+
+    expect(res.status).toBe(201);
+    expect(res.body.tags).toEqual(["frontend", "urgent"]);
+  });
+
+  it("defaults tags to empty array", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .send({ title: "No tags" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.tags).toEqual([]);
+  });
+
+  it("rejects invalid tags", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Bad tags", tags: [123] });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("tags must be an array of strings");
+  });
 });
 
 describe("GET /api/tasks", () => {
@@ -83,6 +110,45 @@ describe("GET /api/tasks", () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(2);
+  });
+
+  it("filters tasks by status", async () => {
+    await request(app).post("/api/tasks").send({ title: "Todo" });
+    const done = await request(app).post("/api/tasks").send({ title: "Done" });
+    await request(app).patch(`/api/tasks/${done.body.id}`).send({ status: "done" });
+
+    const res = await request(app).get("/api/tasks?status=done");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].title).toBe("Done");
+  });
+
+  it("filters tasks by priority", async () => {
+    await request(app).post("/api/tasks").send({ title: "High", priority: "high" });
+    await request(app).post("/api/tasks").send({ title: "Low", priority: "low" });
+
+    const res = await request(app).get("/api/tasks?priority=high");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].title).toBe("High");
+  });
+
+  it("filters tasks by tag", async () => {
+    await request(app).post("/api/tasks").send({ title: "FE", tags: ["frontend"] });
+    await request(app).post("/api/tasks").send({ title: "BE", tags: ["backend"] });
+
+    const res = await request(app).get("/api/tasks?tag=frontend");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].title).toBe("FE");
+  });
+
+  it("rejects invalid status filter", async () => {
+    const res = await request(app).get("/api/tasks?status=invalid");
+    expect(res.status).toBe(400);
   });
 });
 
@@ -168,6 +234,32 @@ describe("PATCH /api/tasks/:id", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid priority");
+  });
+
+  it("rejects empty title", async () => {
+    const created = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Original" });
+
+    const res = await request(app)
+      .patch(`/api/tasks/${created.body.id}`)
+      .send({ title: "" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("title cannot be empty");
+  });
+
+  it("updates task tags", async () => {
+    const created = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Tag me" });
+
+    const res = await request(app)
+      .patch(`/api/tasks/${created.body.id}`)
+      .send({ tags: ["important", "review"] });
+
+    expect(res.status).toBe(200);
+    expect(res.body.tags).toEqual(["important", "review"]);
   });
 
   it("returns 404 for unknown id", async () => {
