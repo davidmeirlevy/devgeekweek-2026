@@ -62,6 +62,11 @@ export function create(req: Request, res: Response): void {
 export function update(req: Request, res: Response): void {
   const { title, description, status, priority, tags } = req.body;
 
+  if (title !== undefined && !isNonEmptyString(title)) {
+    res.status(400).json({ error: "title cannot be empty" });
+    return;
+  }
+
   if (status !== undefined && !isValidStatus(status)) {
     res.status(400).json({ error: "Invalid status" });
     return;
