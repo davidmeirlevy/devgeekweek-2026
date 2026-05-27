@@ -7,6 +7,9 @@ A minimal TypeScript REST API for task management (Express + Vitest). Used as a 
 - `npm run dev` — start dev server with hot reload
 - `npm test` — run all tests (vitest)
 - `npm run test:watch` — run tests in watch mode
+- `gh pr create` — create a pull request
+- `gh pr view --comments` — read PR review comments
+- `gh pr view --web` — open current PR in browser
 
 ## Architecture
 - **src/types.ts** — shared type definitions

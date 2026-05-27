@@ -1,0 +1,20 @@
+---
+description: "Step-by-step guide for implementing a new feature in this codebase"
+alwaysApply: false
+---
+
+## Checklist
+1. Types → `src/types.ts`
+2. Model function → `src/models/task.model.ts`
+3. Service function → `src/services/task.service.ts`
+4. Controller handler → `src/controllers/task.controller.ts`
+5. Route → `src/routes/task.routes.ts`
+6. Validation helpers → `src/validation.ts` if needed
+7. Unit test → `tests/unit/`
+8. Integration test → `tests/integration/`
+9. `npm test` — all must pass
+
+## Constraints
+- Controllers never call models directly
+- Validate in the controller, business logic in the service
+- All existing tests must still pass

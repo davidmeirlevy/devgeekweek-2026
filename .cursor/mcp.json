@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "atlassian": {
+      "command": "npx",
+      "args": ["-y", "@atlassian/mcp-server"],
+      "env": {
+        "ATLASSIAN_URL": "https://your-org.atlassian.net",
+        "ATLASSIAN_EMAIL": "you@example.com",
+        "ATLASSIAN_API_TOKEN": "<your-token-from-id.atlassian.com>"
+      }
+    }
+  }
+}

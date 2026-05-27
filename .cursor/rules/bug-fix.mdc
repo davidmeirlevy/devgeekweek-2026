@@ -1,0 +1,14 @@
+---
+description: "How to find and fix a bug in this codebase"
+alwaysApply: false
+---
+
+## Approach
+1. Explain where in the code the bug likely lives and why
+2. Wait for confirmation before writing any code
+3. Fix in the minimum lines — prefer upstream fix over downstream workaround
+4. Add a regression test that would have caught this bug
+
+## Constraints
+- Do not refactor unrelated code
+- The fix must not break any currently passing tests
