@@ -1,5 +1,5 @@
 import {
-  getAllTasks,
+  getFilteredTasks,
   getTaskById,
   createTask,
   updateTask,
@@ -7,11 +7,12 @@ import {
   getTasksByPriority,
   CreateTaskInput,
   Task,
+  TaskFilters,
   UpdateTaskInput,
 } from "../models/task.model";
 
-export function listTasks(): Task[] {
-  return getAllTasks();
+export function listTasks(filters: TaskFilters = {}): Task[] {
+  return getFilteredTasks(filters);
 }
 
 export function findTaskById(id: string): Task | undefined {

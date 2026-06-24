@@ -1,11 +1,30 @@
 import { Request, Response } from "express";
 import * as taskService from "../services/task.service";
+import {
+  isNonEmptyString,
+  isStringArray,
+  isValidPriority,
+  isValidStatus,
+} from "../validation";
 
-const VALID_PRIORITIES = ["low", "medium", "high"];
-const VALID_STATUSES = ["todo", "in-progress", "done"];
+export function listTasks(req: Request, res: Response): void {
+  const filters: {
+    status?: "todo" | "in-progress" | "done";
+    priority?: "low" | "medium" | "high";
+    tag?: string;
+  } = {};
 
-export function listTasks(_req: Request, res: Response): void {
-  res.json(taskService.listTasks());
+  if (typeof req.query.status === "string") {
+    filters.status = req.query.status as "todo" | "in-progress" | "done";
+  }
+  if (typeof req.query.priority === "string") {
+    filters.priority = req.query.priority as "low" | "medium" | "high";
+  }
+  if (typeof req.query.tag === "string") {
+    filters.tag = req.query.tag;
+  }
+
+  res.json(taskService.listTasks(filters));
 }
 
 export function listTasksByPriority(_req: Request, res: Response): void {
@@ -22,29 +41,38 @@ export function getTask(req: Request, res: Response): void {
 }
 
 export function createTask(req: Request, res: Response): void {
-  const { title, description, priority } = req.body;
-  if (!title || typeof title !== "string") {
+  const { title, description, priority, tags } = req.body;
+  if (!isNonEmptyString(title)) {
     res.status(400).json({ error: "title is required" });
     return;
   }
-  if (priority && !VALID_PRIORITIES.includes(priority)) {
+  if (priority && !isValidPriority(priority)) {
     res.status(400).json({ error: "Invalid priority" });
     return;
   }
-  const task = taskService.createNewTask({ title, description, priority });
+  if (tags !== undefined && !isStringArray(tags)) {
+    res.status(400).json({ error: "Invalid tags" });
+    return;
+  }
+  const task = taskService.createNewTask({ title, description, priority, tags });
   res.status(201).json(task);
 }
 
 export function updateTask(req: Request, res: Response): void {
-  const { title, description, status, priority } = req.body;
+  const { title, description, status, priority, tags } = req.body;
 
-  if (status && !VALID_STATUSES.includes(status)) {
+  if (status && !isValidStatus(status)) {
     res.status(400).json({ error: "Invalid status" });
     return;
   }
 
-  if (priority && !VALID_PRIORITIES.includes(priority)) {
+  if (priority && !isValidPriority(priority)) {
     res.status(400).json({ error: "Invalid priority" });
+    return;
+  }
+
+  if (tags !== undefined && !isStringArray(tags)) {
+    res.status(400).json({ error: "Invalid tags" });
     return;
   }
 
@@ -53,6 +81,7 @@ export function updateTask(req: Request, res: Response): void {
     description,
     status,
     priority,
+    tags,
   });
   if (!task) {
     res.status(404).json({ error: "Task not found" });

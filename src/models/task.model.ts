@@ -8,6 +8,7 @@ export interface Task {
   description: string;
   status: "todo" | "in-progress" | "done";
   priority: Priority;
+  tags: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -16,6 +17,7 @@ export interface CreateTaskInput {
   title: string;
   description?: string;
   priority?: Priority;
+  tags?: string[];
 }
 
 export interface UpdateTaskInput {
@@ -23,12 +25,34 @@ export interface UpdateTaskInput {
   description?: string;
   status?: Task["status"];
   priority?: Priority;
+  tags?: string[];
+}
+
+export interface TaskFilters {
+  status?: Task["status"];
+  priority?: Priority;
+  tag?: string;
 }
 
 const tasks: Map<string, Task> = new Map();
 
 export function getAllTasks(): Task[] {
   return Array.from(tasks.values());
+}
+
+export function getFilteredTasks(filters: TaskFilters): Task[] {
+  return Array.from(tasks.values()).filter((task) => {
+    if (filters.status !== undefined && task.status !== filters.status) {
+      return false;
+    }
+    if (filters.priority !== undefined && task.priority !== filters.priority) {
+      return false;
+    }
+    if (filters.tag !== undefined && !task.tags.includes(filters.tag)) {
+      return false;
+    }
+    return true;
+  });
 }
 
 export function getTaskById(id: string): Task | undefined {
@@ -43,6 +67,7 @@ export function createTask(input: CreateTaskInput): Task {
     description: input.description ?? "",
     status: "todo",
     priority: input.priority ?? "medium",
+    tags: input.tags ?? [],
     createdAt: now,
     updatedAt: now,
   };
@@ -54,9 +79,13 @@ export function updateTask(id: string, input: UpdateTaskInput): Task | null {
   const existing = tasks.get(id);
   if (!existing) return null;
 
+  const definedInput = Object.fromEntries(
+    Object.entries(input).filter(([, value]) => value !== undefined)
+  ) as UpdateTaskInput;
+
   const updated: Task = {
     ...existing,
-    ...input,
+    ...definedInput,
     updatedAt: new Date().toISOString(),
   };
   tasks.set(id, updated);
