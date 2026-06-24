@@ -1,4 +1,4 @@
-Use the Jira MCP tool to load ticket $TICKET_ID with this JQL: `issue = $TICKET_ID`
+Use the Jira MCP tool to load ticket $ARGUMENTS with this JQL: `issue = $ARGUMENTS`
 
 Display the ticket details clearly (summary, status, assignee, description, comments).
 
