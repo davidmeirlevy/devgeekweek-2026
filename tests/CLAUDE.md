@@ -1,0 +1,9 @@
+# Tests
+
+Vitest + supertest. `npm test` / `npm run test:watch`.
+
+- `tests/` — API integration; `tests/integration/` — cross-cutting; `src/<layer>/tests/` — unit
+- Import `app` from `src/app`, not `server.ts`
+- `beforeEach`: call model `clearAll()` to reset in-memory state
+- Assert HTTP contract (status + body), not internals
+- One behavior per `it`; no mocks in integration tests unless required

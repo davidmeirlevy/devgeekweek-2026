@@ -1,5 +1,29 @@
 import { randomUUID } from "crypto";
-import { Task, CreateTaskInput, UpdateTaskInput, Priority } from "./types";
+
+export type Priority = "low" | "medium" | "high";
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: "todo" | "in-progress" | "done";
+  priority: Priority;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTaskInput {
+  title: string;
+  description?: string;
+  priority?: Priority;
+}
+
+export interface UpdateTaskInput {
+  title?: string;
+  description?: string;
+  status?: Task["status"];
+  priority?: Priority;
+}
 
 const tasks: Map<string, Task> = new Map();
 

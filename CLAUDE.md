@@ -1,0 +1,26 @@
+# Architecture
+
+Layered Express API: **routes → controllers → services → models**. Never skip layers.
+
+```
+src/server.ts              entry point
+src/app.ts                 express app, mounts /api
+src/routes/index.ts        mounts feature routers
+src/routes/<feature>.route.ts
+src/controllers/<feature>.controller.ts   req/res, validation, status codes
+src/services/<feature>.service.ts         business logic
+src/models/<feature>.model.ts             types, in-memory store, CRUD
+tests/                                    integration tests (vitest + supertest)
+```
+
+- Routes: wire path → controller only
+- Controllers: HTTP only — no direct model access
+- Services: call models — no `Request`/`Response`
+- Models: data + `clearAll()` for tests
+- One feature = matching `task.*` files; register routes in `routes/index.ts`
+- API prefix `/api` is set in `app.ts`
+
+## Commands
+
+- `npm run dev` — start with hot reload
+- `npm test` / `npm run test:watch` — vitest

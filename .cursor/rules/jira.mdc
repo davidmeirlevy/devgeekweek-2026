@@ -1,0 +1,24 @@
+---
+description: Read KAN project issues from Jira before starting work
+alwaysApply: true
+---
+
+# Jira — KAN project
+
+At the start of each session (or when picking up work), read open issues from the **KAN** project (DML) via the Atlassian MCP.
+
+## Query
+
+Use JQL:
+
+```
+project = KAN AND statusCategory != Done ORDER BY created DESC
+```
+
+Fetch `summary`, `status`, `issuetype`, `priority`, `assignee`, `key`, and `description`.
+
+## When working a ticket
+
+- Treat the Jira issue as the source of truth for requirements and acceptance criteria.
+- If the user references a ticket key (e.g. `KAN-6`), fetch that issue before implementing.
+- Do not rely on local `TICKET*.md` files when the Jira issue is available.

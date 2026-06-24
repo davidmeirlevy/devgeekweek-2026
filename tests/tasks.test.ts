@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../src/app";
-import { clearAll } from "../src/store";
+import { clearAll } from "../src/models/task.model";
 
 beforeEach(() => {
   clearAll();
