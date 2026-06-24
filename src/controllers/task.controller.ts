@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as taskService from "../services/task.service";
-import { isValidPriority, isValidStatus, isNonEmptyString, isStringArray } from "../validation";
+import { isValidPriority, isValidStatus, isNonEmptyString, isOptionalString, isStringArray } from "../validation";
 import { TaskFilters } from "../types";
 
 export function list(req: Request, res: Response): void {
@@ -55,6 +55,10 @@ export function create(req: Request, res: Response): void {
     res.status(400).json({ error: "tags must be an array of strings" });
     return;
   }
+  if (!isOptionalString(description)) {
+    res.status(400).json({ error: "description must be a string" });
+    return;
+  }
   const task = taskService.createTask({ title, description, priority, tags });
   res.status(201).json(task);
 }
@@ -79,6 +83,11 @@ export function update(req: Request, res: Response): void {
 
   if (tags !== undefined && !isStringArray(tags)) {
     res.status(400).json({ error: "tags must be an array of strings" });
+    return;
+  }
+
+  if (!isOptionalString(description)) {
+    res.status(400).json({ error: "description must be a string" });
     return;
   }
 
