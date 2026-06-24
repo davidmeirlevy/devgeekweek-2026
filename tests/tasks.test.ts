@@ -144,6 +144,19 @@ describe("PATCH /api/tasks/:id", () => {
     expect(res.status).toBe(400);
   });
 
+  it("rejects empty title", async () => {
+    const created = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Keep me" });
+
+    const res = await request(app)
+      .patch(`/api/tasks/${created.body.id}`)
+      .send({ title: "" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("title cannot be empty");
+  });
+
   it("updates task priority", async () => {
     const created = await request(app)
       .post("/api/tasks")

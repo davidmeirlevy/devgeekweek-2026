@@ -40,6 +40,11 @@ export function createTask(req: Request, res: Response): void {
 export function updateTask(req: Request, res: Response): void {
   const { title, description, status, priority } = req.body;
 
+  if (title !== undefined && !isNonEmptyString(title)) {
+    res.status(400).json({ error: "title cannot be empty" });
+    return;
+  }
+
   if (status && !isValidStatus(status)) {
     res.status(400).json({ error: "Invalid status" });
     return;
