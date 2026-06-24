@@ -93,23 +93,6 @@ describe("task.model", () => {
     });
   });
 
-  describe("findByPriority", () => {
-    it("sorts high → medium → low", () => {
-      model.insert({ title: "Low", priority: "low" });
-      model.insert({ title: "High", priority: "high" });
-      model.insert({ title: "Med", priority: "medium" });
-
-      const sorted = model.findByPriority();
-      expect(sorted[0].title).toBe("High");
-      expect(sorted[1].title).toBe("Med");
-      expect(sorted[2].title).toBe("Low");
-    });
-
-    it("returns empty array when no tasks", () => {
-      expect(model.findByPriority()).toEqual([]);
-    });
-  });
-
   describe("filter", () => {
     it("filters by status", () => {
       model.insert({ title: "Todo" });

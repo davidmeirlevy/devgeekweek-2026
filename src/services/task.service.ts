@@ -1,5 +1,7 @@
-import { Task, CreateTaskInput, UpdateTaskInput, TaskFilters } from "../types";
+import { Task, CreateTaskInput, UpdateTaskInput, TaskFilters, Priority } from "../types";
 import * as taskModel from "../models/task.model";
+
+const PRIORITY_ORDER: Record<Priority, number> = { high: 0, medium: 1, low: 2 };
 
 export function getAllTasks(): Task[] {
   return taskModel.findAll();
@@ -22,7 +24,9 @@ export function deleteTask(id: string): boolean {
 }
 
 export function getTasksByPriority(): Task[] {
-  return taskModel.findByPriority();
+  return taskModel.findAll().sort(
+    (a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+  );
 }
 
 export function filterTasks(filters: TaskFilters): Task[] {
