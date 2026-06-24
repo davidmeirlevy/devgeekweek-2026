@@ -3,3 +3,5 @@ dist/
 *.js
 !vitest.config.js
 .DS_Store
+/.vs/devgeekweek-2026/FileContentIndex
+/.vs/slnx.sqlite
