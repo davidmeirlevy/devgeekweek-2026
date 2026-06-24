@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { Task, CreateTaskInput, UpdateTaskInput } from "./types";
+import { Task, CreateTaskInput, UpdateTaskInput } from "../models/task.model";
 
 const tasks: Map<string, Task> = new Map();
 

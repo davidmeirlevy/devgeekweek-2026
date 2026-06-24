@@ -1,28 +1,26 @@
-import { Router, Request, Response } from "express";
+import { Request, Response } from "express";
 import {
   getAllTasks,
   getTaskById,
   createTask,
   updateTask,
   deleteTask,
-} from "./store";
+} from "../services/task.service";
 
-const router = Router();
-
-router.get("/tasks", (_req: Request, res: Response) => {
+export function listTasks(_req: Request, res: Response) {
   res.json(getAllTasks());
-});
+}
 
-router.get("/tasks/:id", (req: Request, res: Response) => {
+export function getTask(req: Request, res: Response) {
   const task = getTaskById(req.params.id);
   if (!task) {
     res.status(404).json({ error: "Task not found" });
     return;
   }
   res.json(task);
-});
+}
 
-router.post("/tasks", (req: Request, res: Response) => {
+export function createTaskHandler(req: Request, res: Response) {
   const { title, description } = req.body;
   if (!title || typeof title !== "string") {
     res.status(400).json({ error: "title is required" });
@@ -30,9 +28,9 @@ router.post("/tasks", (req: Request, res: Response) => {
   }
   const task = createTask({ title, description });
   res.status(201).json(task);
-});
+}
 
-router.patch("/tasks/:id", (req: Request, res: Response) => {
+export function updateTaskHandler(req: Request, res: Response) {
   const { title, description, status } = req.body;
 
   if (status && !["todo", "in-progress", "done"].includes(status)) {
@@ -46,15 +44,13 @@ router.patch("/tasks/:id", (req: Request, res: Response) => {
     return;
   }
   res.json(task);
-});
+}
 
-router.delete("/tasks/:id", (req: Request, res: Response) => {
+export function deleteTaskHandler(req: Request, res: Response) {
   const deleted = deleteTask(req.params.id);
   if (!deleted) {
     res.status(404).json({ error: "Task not found" });
     return;
   }
   res.status(204).send();
-});
-
-export default router;
+}
