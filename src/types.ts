@@ -33,3 +33,16 @@ export interface TaskFilters {
   priority?: Priority;
   tag?: string;
 }
+
+export interface Comment {
+  id: string;
+  taskId: string;
+  author: string;
+  body: string;
+  createdAt: string;
+}
+
+export interface CreateCommentInput {
+  author: string;
+  body: string;
+}
