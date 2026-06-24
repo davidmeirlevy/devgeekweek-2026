@@ -1,0 +1,34 @@
+---
+description: "New API feature workflow — attach when adding endpoints, fields, or domain behavior. Not for bug fixes, refactors, or test-only changes."
+alwaysApply: false
+---
+
+# New Feature Workflow
+
+Use this rule when implementing **net-new functionality** (new endpoints, fields, resources, or business behavior). Do **not** use for bug fixes, refactors, or adding tests without new behavior.
+
+## Constraints
+
+- Controllers call **services only** — never import or call models directly.
+- Controllers **validate** request input (guard clauses, `{ error: "message" }`, correct status codes).
+- Services contain **business logic** and call models.
+
+## Checklist
+
+Complete in order. Do not skip steps.
+
+1. **Types** — add or extend interfaces/types in `src/types.ts` (no `any`).
+2. **Model** — data-layer functions in `src/models/` (CRUD, in-memory store).
+3. **Service** — business logic in `src/services/`; orchestrates models, no HTTP concerns.
+4. **Controller** — HTTP layer in `src/controllers/`; validate input, call service, map responses.
+5. **Route** — wire paths to controller functions in `src/routes/`; specific routes before `:id` routes.
+6. **Validation** — reusable validators in `src/validation.ts`; use type guards from controllers.
+7. **Unit tests** — co-located beside model and service: `path/to/x.ts` → `path/to/tests/x.test.ts`. Write failing tests first.
+8. **Integration tests** — HTTP tests with supertest beside the controller or route; cover success and error cases.
+9. **Run tests** — `npm test`; all tests must pass before the feature is done.
+
+## Conventions
+
+- Named exports for models, services, controllers; default export for routers.
+- Reset state in tests: `beforeEach(() => clear())` from the model.
+- Error format: `{ error: "message" }`.

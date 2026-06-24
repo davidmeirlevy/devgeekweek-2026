@@ -1,0 +1,25 @@
+---
+description: "Bug fix workflow — attach when correcting broken behavior. Not for new features, refactors, or test-only work."
+alwaysApply: false
+---
+
+# Bug Fix Workflow
+
+Use this rule when **correcting existing broken behavior**. Do **not** use for new features, refactors, or adding tests without a defect to fix.
+
+## Approach
+
+Follow in order. Do not skip steps.
+
+1. **Diagnose** — explain where in the code the bug likely lives (model, service, controller, route, validation) and **why**. Cite the relevant file(s) and logic.
+2. **Confirm** — present the diagnosis and proposed minimal fix. **Wait for user confirmation before writing any code.**
+3. **Fix** — change the smallest number of lines needed. No drive-by refactors or unrelated edits.
+4. **Regression test** — add a co-located test that would have caught the bug: `path/to/x.ts` → `path/to/tests/x.test.ts`. Unit test for model/service bugs; supertest integration test for HTTP bugs.
+5. **Verify** — run `npm test`; all tests must pass.
+
+## Constraints
+
+- Preserve existing architecture: controllers → services → models.
+- Reset state in tests: `beforeEach(() => clear())` from the model.
+- do not refactor unreleated code.
+- all pre-existing tests must pass.

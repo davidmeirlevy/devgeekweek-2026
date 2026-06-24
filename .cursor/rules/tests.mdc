@@ -1,0 +1,13 @@
+---
+description: "Test writing conventions"
+globs: ["tests/**/*.ts"]
+alwaysApply: false
+---
+
+# Test Rules
+
+- Use `beforeEach(() => clearAll())` to reset state between tests.
+- Test descriptions use plain English: "creates a task with title and description".
+- Group tests by endpoint in `describe` blocks.
+- Test both success and error cases for each endpoint.
+- Use `supertest` for HTTP assertions against the Express app.
