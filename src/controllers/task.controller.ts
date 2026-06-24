@@ -21,7 +21,11 @@ export function list(req: Request, res: Response): void {
     }
     filters.priority = priority;
   }
-  if (tag && typeof tag === "string") {
+  if (tag) {
+    if (typeof tag !== "string") {
+      res.status(400).json({ error: "Invalid tag filter" });
+      return;
+    }
     filters.tag = tag;
   }
 
