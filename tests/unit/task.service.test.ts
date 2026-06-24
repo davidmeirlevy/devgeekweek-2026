@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { clear } from "../../models/task.model";
-import * as taskService from "../task.service";
+import { clear } from "../../src/models/task.model";
+import * as taskService from "../../src/services/task.service";
 
 beforeEach(() => {
   clear();

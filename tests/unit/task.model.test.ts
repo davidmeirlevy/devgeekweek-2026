@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import * as model from "../task.model";
+import * as model from "../../src/models/task.model";
 
 beforeEach(() => {
   model.clear();

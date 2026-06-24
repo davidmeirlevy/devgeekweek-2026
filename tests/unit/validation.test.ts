@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isValidPriority, isValidStatus, isNonEmptyString, isStringArray } from "../validation";
+import { isValidPriority, isValidStatus, isNonEmptyString, isStringArray } from "../../src/validation";
 
 describe("validation", () => {
   describe("isValidPriority", () => {
