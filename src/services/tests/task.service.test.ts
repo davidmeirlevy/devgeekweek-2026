@@ -51,6 +51,13 @@ describe("taskService", () => {
     it("returns null for unknown id", () => {
       expect(taskService.updateTask("nope", { title: "X" })).toBeNull();
     });
+
+    it("updates priority", () => {
+      const created = taskService.createTask({ title: "Reprioritize" });
+      const updated = taskService.updateTask(created.id, { priority: "low" });
+
+      expect(updated!.priority).toBe("low");
+    });
   });
 
   describe("deleteTask", () => {
@@ -96,6 +103,15 @@ describe("taskService", () => {
       const result = taskService.filterTasks({ tag: "frontend" });
       expect(result).toHaveLength(1);
       expect(result[0].title).toBe("FE");
+    });
+
+    it("filters by priority", () => {
+      taskService.createTask({ title: "High", priority: "high" });
+      taskService.createTask({ title: "Low", priority: "low" });
+
+      const result = taskService.filterTasks({ priority: "high" });
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("High");
     });
   });
 });

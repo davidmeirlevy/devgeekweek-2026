@@ -69,6 +69,13 @@ describe("task.model", () => {
       expect(updated!.description).toBe("stay");
     });
 
+    it("updates priority", () => {
+      const inserted = model.insert({ title: "Reprioritize" });
+      const updated = model.update(inserted.id, { priority: "high" });
+
+      expect(updated!.priority).toBe("high");
+    });
+
     it("returns null for unknown id", () => {
       expect(model.update("nope", { title: "X" })).toBeNull();
     });
