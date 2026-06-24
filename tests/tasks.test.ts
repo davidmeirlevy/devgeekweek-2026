@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../src/app";
-import { clearAll } from "../src/store";
+import { clearAll } from "../src/models/task.model";
 
 beforeEach(() => {
   clearAll();
@@ -37,6 +37,33 @@ describe("POST /api/tasks", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("title is required");
+  });
+
+  it("creates a task with explicit priority", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Urgent", priority: "high" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.priority).toBe("high");
+  });
+
+  it("defaults priority to medium", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Normal task" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.priority).toBe("medium");
+  });
+
+  it("rejects invalid priority", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Bad priority", priority: "critical" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Invalid priority");
   });
 });
 
@@ -117,12 +144,61 @@ describe("PATCH /api/tasks/:id", () => {
     expect(res.status).toBe(400);
   });
 
+  it("updates task priority", async () => {
+    const created = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Reprioritize" });
+
+    const res = await request(app)
+      .patch(`/api/tasks/${created.body.id}`)
+      .send({ priority: "high" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.priority).toBe("high");
+  });
+
+  it("rejects invalid priority", async () => {
+    const created = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Test" });
+
+    const res = await request(app)
+      .patch(`/api/tasks/${created.body.id}`)
+      .send({ priority: "critical" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Invalid priority");
+  });
+
   it("returns 404 for unknown id", async () => {
     const res = await request(app)
       .patch("/api/tasks/nonexistent")
       .send({ title: "Nope" });
 
     expect(res.status).toBe(404);
+  });
+});
+
+describe("GET /api/tasks/by-priority", () => {
+  it("returns tasks sorted high \u2192 medium \u2192 low", async () => {
+    await request(app).post("/api/tasks").send({ title: "Low", priority: "low" });
+    await request(app).post("/api/tasks").send({ title: "High", priority: "high" });
+    await request(app).post("/api/tasks").send({ title: "Medium", priority: "medium" });
+
+    const res = await request(app).get("/api/tasks/by-priority");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(3);
+    expect(res.body[0].title).toBe("High");
+    expect(res.body[1].title).toBe("Medium");
+    expect(res.body[2].title).toBe("Low");
+  });
+
+  it("returns empty array when no tasks exist", async () => {
+    const res = await request(app).get("/api/tasks/by-priority");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([]);
   });
 });
 
