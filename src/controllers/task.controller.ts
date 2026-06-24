@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import * as taskService from "../services/task.service";
-
-const VALID_PRIORITIES = ["low", "medium", "high"];
-const VALID_STATUSES = ["todo", "in-progress", "done"];
+import {
+  isNonEmptyString,
+  isValidPriority,
+  isValidStatus,
+} from "../validation";
 
 export function listTasks(_req: Request, res: Response): void {
   res.json(taskService.listTasks());
@@ -23,11 +25,11 @@ export function getTask(req: Request, res: Response): void {
 
 export function createTask(req: Request, res: Response): void {
   const { title, description, priority } = req.body;
-  if (!title || typeof title !== "string") {
+  if (!isNonEmptyString(title)) {
     res.status(400).json({ error: "title is required" });
     return;
   }
-  if (priority && !VALID_PRIORITIES.includes(priority)) {
+  if (priority && !isValidPriority(priority)) {
     res.status(400).json({ error: "Invalid priority" });
     return;
   }
@@ -38,12 +40,12 @@ export function createTask(req: Request, res: Response): void {
 export function updateTask(req: Request, res: Response): void {
   const { title, description, status, priority } = req.body;
 
-  if (status && !VALID_STATUSES.includes(status)) {
+  if (status && !isValidStatus(status)) {
     res.status(400).json({ error: "Invalid status" });
     return;
   }
 
-  if (priority && !VALID_PRIORITIES.includes(priority)) {
+  if (priority && !isValidPriority(priority)) {
     res.status(400).json({ error: "Invalid priority" });
     return;
   }
